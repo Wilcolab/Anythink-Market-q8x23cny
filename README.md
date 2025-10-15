@@ -1,39 +1,183 @@
-# Python Server
+# Anythink Market - Dual Server Application
 
-This project contains a FastAPI server implemented in Python. It provides two routes for managing a task list.
+This project contains both a Python FastAPI server and a Node.js Express server (with TypeScript) for managing a task list. The Node.js server is a modern migration of the Python endpoints with enhanced type safety and development features.
 
-## Project Structure
+## 🚀 Project Overview
 
-The project has the following files and directories:
+The application provides a simple task management API with endpoints to create and retrieve time-travel themed tasks. Both servers implement the same API contract and can run simultaneously.
 
-- `python-server/src/main.py`: This file contains the implementation of the FastAPI server with two routes. It handles adding a task to a list and retrieving the list.
+## 📁 Project Structure
 
-- `python-server/src/__init__.py`: This file is an empty file that marks the `src` directory as a Python package.
+### Python Server (`python-server/`)
 
-- `python-server/requirements.txt`: This file lists the dependencies required for the FastAPI server and other dependencies.
+- `python-server/src/main.py`: FastAPI server implementation with task management routes
+- `python-server/src/__init__.py`: Python package marker
+- `python-server/requirements.txt`: Python dependencies (FastAPI, uvicorn, pydantic)
+- `python-server/Dockerfile`: Docker configuration for the Python server
 
-- `python-server/Dockerfile`: This file is used to build a Docker image for the FastAPI server. It specifies the base image, copies the source code into the image, installs the dependencies, and sets the command to run the server.
+### Node.js Server (`express-server/`)
 
-- `docker-compose.yml`: This file is used to define and run multi-container Docker applications. It specifies the services to run, their configurations, and any dependencies between them.
+- `express-server/src/index.ts`: Express server with TypeScript and Pug template engine
+- `express-server/package.json`: Node.js dependencies and scripts
+- `express-server/tsconfig.json`: TypeScript compiler configuration
+- `express-server/Dockerfile`: Docker configuration for the Node.js server
+- `express-server/src/views/`: Pug template files for future UI features
 
-## Getting Started
+### Root Level
 
-To run the FastAPI server using Docker, follow these steps:
+- `docker-compose.yml`: Orchestrates both servers with Docker Compose
 
-- Build and start the Docker containers by running the following command:
+## 🏃 Getting Started
 
-  ```shell
-  docker compose up
-  ```
+### Running with Docker Compose (Recommended)
 
-  This command will build the Docker image for the FastAPI server and start the containers defined in the `docker-compose.yml` file.
+Build and start both servers simultaneously:
 
-- The FastAPI server should now be running. You can access at port `8000`.
+```shell
+docker compose up
+```
 
-## API Routes
+This will start:
+- **Python FastAPI server** on port `8000`
+- **Node.js Express server** on port `8001`
 
-The FastAPI server provides the following API routes:
+Both servers include hot-reload capabilities for development.
 
-- `POST /tasks`: Adds a task to the task list. The request body should contain the task details.
+### Running Individually
 
-- `GET /tasks`: Retrieves the task list.
+#### Python Server
+
+```shell
+cd python-server
+pip install -r requirements.txt
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### Node.js Server
+
+```shell
+cd express-server
+npm install
+npm start
+```
+
+Or with yarn:
+
+```shell
+cd express-server
+yarn install
+yarn start
+```
+
+## 🔌 API Routes
+
+Both servers implement the same API endpoints:
+
+### GET `/`
+Returns a simple "Hello World" message.
+
+**Response:**
+```
+Hello World
+```
+
+### POST `/tasks`
+Adds a new task to the task list.
+
+**Request Body:**
+```json
+{
+  "text": "Your task description"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Task added successfully"
+}
+```
+
+### GET `/tasks`
+Retrieves all tasks in the list.
+
+**Response:**
+```json
+{
+  "tasks": [
+    "Write a diary entry from the future",
+    "Create a time machine from a cardboard box",
+    "Plan a trip to the dinosaurs",
+    "Draw a futuristic city",
+    "List items to bring on a time-travel adventure"
+  ]
+}
+```
+
+## 🛠️ Technology Stack
+
+### Python Server
+- **FastAPI**: Modern, fast web framework
+- **Pydantic**: Data validation using Python type hints
+- **Uvicorn**: ASGI server with hot reload
+
+### Node.js Server
+- **Express**: Web application framework
+- **TypeScript**: Type-safe JavaScript
+- **Pug**: Template engine for future UI development
+- **ts-node**: TypeScript execution environment
+- **nodemon**: Auto-restart on file changes
+
+## 🔄 Migration Details
+
+The Node.js server is a complete migration of the Python FastAPI endpoints with the following enhancements:
+
+- ✅ Full TypeScript support for enhanced type safety
+- ✅ Input validation on POST requests
+- ✅ Pug template engine for future UI features
+- ✅ Modern Node.js (v18) and updated dependencies
+- ✅ Hot reload for rapid development
+- ✅ Identical API contract for seamless transition
+
+## 🧪 Testing the APIs
+
+You can test the APIs using curl:
+
+```shell
+# Test root endpoint (Python)
+curl http://localhost:8000/
+
+# Test root endpoint (Node.js)
+curl http://localhost:8001/
+
+# Get all tasks (Python)
+curl http://localhost:8000/tasks
+
+# Get all tasks (Node.js)
+curl http://localhost:8001/tasks
+
+# Add a new task (Python)
+curl -X POST http://localhost:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Build a flux capacitor"}'
+
+# Add a new task (Node.js)
+curl -X POST http://localhost:8001/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Build a flux capacitor"}'
+```
+
+## 📝 Development
+
+Both servers support hot-reload during development:
+
+- **Python**: Changes to `.py` files trigger automatic reload
+- **Node.js**: Changes to `.ts` and `.pug` files trigger automatic reload
+
+## 🐳 Docker
+
+Each server has its own Dockerfile optimized for its technology stack. The `docker-compose.yml` file orchestrates both services with appropriate port mappings and volume mounts for development.
+
+## 📄 License
+
+MIT
